@@ -1,24 +1,18 @@
 from app import app
-from flask import request
+from flask import request, jsonify 
 from kafka import KafkaProducer
 from pract import produce_responce
+import json
+import json
+from consumer import consume_response
 
 def get_payload(action, data):
-    """
-    Create a payload dictionary with action and data.
-
-    Args:
-        action (str): The action to be included in the payload.
-        data (dict): The data to be included in the payload.
-
-    Returns:
-        dict: The payload dictionary.
-    """
     payload = {
         "action": action,
         "data": data
     }
-    return payload
+    message = json.dumps(payload)
+    return message
 
 
 @app.route('/employee/register', methods = ['POST'])
@@ -27,7 +21,8 @@ def post():
     data = request.json
     payload = get_payload(action, data)
     produce_responce(payload)
-    return "done"
+    message = consume_response()
+    return message
     
     
 
