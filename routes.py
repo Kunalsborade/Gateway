@@ -1,43 +1,92 @@
 from app import app
-from flask import request, jsonify 
+from flask import request, jsonify
+import json
 from kafka import KafkaProducer
-from pract import produce_responce
-import json
-import json
+from producer import produce_kafka_message
 from consumer import consume_response
 
-def get_payload(action, data):
+def send_payload(action, data=None, id=None):
     payload = {
         "action": action,
-        "data": data
+        "data": data,
+        "id": id
     }
-    message = json.dumps(payload)
-    return message
+    payload = json.dumps(payload)
+    produce_kafka_message(payload)
+    response = consume_response()
+    return response
 
-
-@app.route('/employee/register', methods = ['POST'])
+@app.route('/employee/register', methods=['POST'])
 def post():
     action = "Post"
     data = request.json
-    payload = get_payload(action, data)
-    produce_responce(payload)
-    message = consume_response()
-    return message
-    
-    
+    response = send_payload(action, data)
+    return jsonify(response)
 
+@app.route('/employee/update/<int:id>', methods=['PUT'])
+def put(id):
+    action = "Put"
+    data = json.loads(request.data)
+    response = send_payload(action, data, id)
+    return jsonify(response)
+
+@app.route('/employee/<int:id>', methods=['GET'])
+def get(id):
+    action = "Get"
+    response = send_payload(action, id=id)
+    return jsonify(response)
+
+@app.route('/employee/delete/<int:id>', methods=['DELETE'])
+def delete(id):
+    action = "Delete"
+    response = send_payload(action, id=id)
+    return jsonify(response)
+
+
+
+
+
+
+
+    
+    
 # @app.route('/employee/update/<int:id>', methods = ['PUT'])
-# def put():
-#     return("update")
-
-# @app.route('/employee/all', methods = ['GET'])
-# def getall():
-#     return("employee all")
-
+# def put(id):
+#     action = "Put"
+#     data = json.loads(request.data)
+#     payload = {
+#         "action": action,
+#         "data": data,
+#         "id": id
+#     }
+#     payload = json.dumps(payload)
+#     produce_kafka_message(payload)
+#     response = consume_response()
+#     return jsonify(response) 
+    
 # @app.route('/employee/<int:id>', methods = ['GET'])
-# def get():
-#     return("register_1")
+# def get(id):
+#     action = "Get"
+#     payload = {
+#         "action": action,
+#         "data": None,
+#         "id": id
+#     }
+#     payload = json.dumps(payload)
+#     produce_kafka_message(payload)
+#     response = consume_response()
+#     return jsonify(response)
+ 
 
 # @app.route('/employee/delete/<int:id>', methods = ['DELETE'])
-# def delete():
-#     return("delete")
+# def delete(id):
+#     action = "Delete"
+#     payload = {
+#         "action": action,
+#         "data": None,
+#         "id": id
+#     }
+#     payload = json.dumps(payload)
+#     produce_kafka_message(payload)
+#     response = consume_response()
+#     return jsonify(response)
