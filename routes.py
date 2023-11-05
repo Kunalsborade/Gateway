@@ -36,6 +36,12 @@ def get(id):
     response = send_payload(action, id=id)
     return jsonify(response)
 
+@app.route('/employee/', methods=['GET'])
+def get_all():
+    action = "Get_all"
+    response = send_payload(action)
+    return jsonify(response)
+
 @app.route('/employee/delete/<int:id>', methods=['DELETE'])
 def delete(id):
     action = "Delete"
