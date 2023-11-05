@@ -12,10 +12,6 @@ kafka_consumer = KafkaConsumer(
 )
 kafka_consumer.subscribe(topics=topic)
 
-# def consume_response():
-#     for message in kafka_consumer:
-#         yield message.value
-
 def consume_response():
     for message in kafka_consumer:
         res = message.value

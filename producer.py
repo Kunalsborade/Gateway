@@ -1,15 +1,3 @@
-# from kafka import KafkaProducer
-
-# def produce_response(message):
-#     topic = 'employee'  
-#     producer = KafkaProducer(
-#         bootstrap_servers='localhost:9092' ,
-#         value_serializer=lambda v: str(v).encode('utf-8')  
-#     )
-#     producer.send(topic, value = message)
-#     producer.close()
-
-
 from kafka import KafkaProducer
 import atexit 
 
